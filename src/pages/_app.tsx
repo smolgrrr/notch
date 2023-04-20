@@ -23,7 +23,6 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       >
         <NavBar />
         <Component {...pageProps} />
-        <Footer />
       </main>
     </ThemeProvider>
   );

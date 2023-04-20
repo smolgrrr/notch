@@ -1,8 +1,12 @@
-import { useCallback, useMemo, useState, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { Button, Icons, Textarea } from "../ui";
 
 import { cn } from "@/styles/utils";
 import { useChat } from "@livekit/components-react";
+
+import { NDKFilter, NDKEvent, NDKUser, NDKUserProfile} from "@nostr-dev-kit/ndk";
+import ndk from "@/lib/ndk";
+import { getUserInfo } from "@/lib/user";
 
 type Props = {
   viewerName: string;
@@ -10,6 +14,21 @@ type Props = {
 
 export default function Chat({ viewerName }: Props) {
   const { chatMessages: messages, send } = useChat();
+  const [events, setEvents] = useState<NDKEvent[]>([]);
+
+  useEffect(() => {
+    async function fetchEvents() {
+      // Now connect to specified relays
+      await ndk.connect();
+
+      const filter: NDKFilter = { kinds: [1], authors: ['8f44c56131b362668b0e01be8c71b24786598bb68fb909cfd78fabfb058dd0f0'], limit: 10 };
+      const fetchedEvents = await ndk.fetchEvents(filter);
+      const eventsArray = Array.from(fetchedEvents);
+      setEvents(eventsArray);
+    }
+
+    fetchEvents();
+  }, []);
 
   const reverseMessages = useMemo(
     () => messages.sort((a, b) => b.timestamp - a.timestamp),
@@ -38,30 +57,53 @@ export default function Chat({ viewerName }: Props) {
     }
   }, [message, send]);
 
+  const [users, setUsers] = useState({});
+
+  useEffect(() => {
+    async function fetchUsers() {
+      const userMap = new Map();
+      await Promise.all(
+        events.map(async (event) => {
+          const user = await getUserInfo(event.pubkey);
+          userMap.set(event.pubkey, user);
+        })
+      );
+      setUsers(userMap);
+    }
+    fetchUsers();
+  }, [events]);
+
   return (
     <>
       <div className="flex min-h-0 flex-1 flex-col-reverse overflow-y-auto">
-        {reverseMessages.map((message) => (
-          <div key={message.timestamp} className="flex items-center gap-2 p-2">
+      {events.map((event) => {
+        let user = null;
+        for (const u of users) {
+          if (u.id === event.pubkey) {
+            user = u;
+            break;
+          }
+        }
+
+        return (
+          <div key={event.id} className="flex items-center gap-2 p-2">
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <div
                   className={cn(
                     "text-xs font-semibold",
-                    viewerName === message.from?.identity && "text-blue-500"
+                    viewerName === user?.name && "text-blue-500"
                   )}
                 >
-                  {message.from?.identity}
-                  {viewerName === message.from?.identity && " (you)"}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {new Date(message.timestamp).toLocaleTimeString()}
+                  h: {user?.name}
+                  {viewerName === user?.name && " (you)"}
                 </div>
               </div>
-              <div className="text-sm">{message.message}</div>
+              <div className="text-sm">{event.content}</div>
             </div>
           </div>
-        ))}
+        );
+      })}
       </div>
       <div className="flex w-full gap-2">
         <Textarea
