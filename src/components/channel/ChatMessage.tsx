@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
-import { Button, Icons, Textarea } from "../ui";
+import { useEffect, useState} from "react";
 
 import { cn } from "@/styles/utils";
 
-import { NDKFilter, NDKEvent, NDKUser, NDKUserProfile} from "@nostr-dev-kit/ndk";
+import { NDKEvent } from "@nostr-dev-kit/ndk";
 import { getUserInfo } from "@/lib/user";
 
 type Props = {

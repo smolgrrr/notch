@@ -2,8 +2,17 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Icons } from "@/components/ui";
 import { buttonVariants } from "@/components/ui/Button";
 import Link from "next/link";
+import { NDKNip07Signer } from "@nostr-dev-kit/ndk";
 
 export function NavBar() {
+  async function getPublicKey() {
+    if (!window.nostr) {
+      return
+    }
+
+    return await window.nostr.getPublicKey()
+  }
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-b-zinc-200 bg-white px-4 dark:border-b-zinc-700 dark:bg-zinc-900">
       <div className="mx-auto flex h-12 items-center space-x-4 sm:justify-between sm:space-x-0">
@@ -44,22 +53,17 @@ export function NavBar() {
                 <span className="sr-only">GitHub</span>
               </div>
             </Link>
-            <Link
-              href="https://twitter.com/livekitted"
-              target="_blank"
-              rel="noreferrer"
-            >
               <div
                 className={buttonVariants({
                   size: "sm",
                   variant: "ghost",
                   className: "text-zinc-700 dark:text-zinc-400",
                 })}
+                onClick={getPublicKey}
               >
-                <Icons.twitter className="h-5 w-5 fill-current" />
-                <span className="sr-only">Twitter</span>
+                <Icons.nostr className="h-7 w-7" />
+                <span className="sr-only">Nostr</span>
               </div>
-            </Link>
             <ThemeToggle />
           </nav>
         </div>
