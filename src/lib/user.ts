@@ -8,5 +8,5 @@ export async function getUserInfo(hexKey: string) {
     await pablo.fetchProfile();
     
     console.log((pablo.profile as NDKUserProfile).name)
-    return pablo.profile;
+    return pablo.profile?.name;
 }
