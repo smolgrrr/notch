@@ -29,14 +29,6 @@ export const ingressRouter = createTRPCRouter({
           roomName: input.roomSlug,
           participantName: input.streamerName,
           participantIdentity: input.roomSlug,
-          video: {
-            source: TrackSource.SCREEN_SHARE,
-            preset: IngressVideoEncodingPreset.H264_1080P_30FPS_3_LAYERS,
-          },
-          audio: {
-            source: TrackSource.SCREEN_SHARE_AUDIO,
-            preset: IngressAudioEncodingPreset.OPUS_STEREO_96KBPS,
-          },
         }
       );
 

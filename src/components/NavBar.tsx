@@ -28,7 +28,7 @@ export function NavBar() {
               Setup
             </Link>
             <Link
-              href="/channel/donald-huh"
+              href="/stream/donald-huh"
               className="flex items-center text-lg font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-100 sm:text-sm"
             >
               Watch
