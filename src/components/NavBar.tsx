@@ -22,13 +22,7 @@ export function NavBar() {
           </Link>
           <nav className="hidden gap-6 md:flex">
             <Link
-              href="/setup"
-              className="flex items-center text-lg font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-100 sm:text-sm"
-            >
-              Setup
-            </Link>
-            <Link
-              href="/stream/donald-huh"
+              href="/stream/smolgrrr"
               className="flex items-center text-lg font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-100 sm:text-sm"
             >
               Watch
@@ -37,7 +31,7 @@ export function NavBar() {
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
-            <Link
+            {/* <Link
               href="https://github.com/livekit-examples/livestream"
               target="_blank"
               rel="noreferrer"
@@ -63,7 +57,7 @@ export function NavBar() {
               >
                 <Icons.nostr className="h-7 w-7" />
                 <span className="sr-only">Nostr</span>
-              </div>
+              </div> */}
             <ThemeToggle />
           </nav>
         </div>

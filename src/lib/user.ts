@@ -7,6 +7,8 @@ export async function getUserInfo(hexKey: string) {
     });
     await pablo.fetchProfile();
     
-    console.log((pablo.profile as NDKUserProfile).name)
-    return pablo.profile?.name;
+    return {
+        name: pablo.profile?.name,
+        image: pablo.profile?.image
+    };
 }

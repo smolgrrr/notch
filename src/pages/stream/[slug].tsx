@@ -34,7 +34,6 @@ export default function ChannelPage({
   const SESSION_VIEWER_TOKEN_KEY = `${slug}-viewer-token`;
   const generatedName = useMemo(() => generateName(), []);
 
-  const [viewerName, setViewerName] = useState("");
   const [viewerToken, setViewerToken] = useState("");
   const [queryEnabled, setQueryEnabled] = useState(false);
 
@@ -45,12 +44,6 @@ export default function ChannelPage({
     },
     {
       onSuccess: (data) => {
-        const payload: JwtPayload = jwt(data?.token);
-
-        if (payload.jti) {
-          setViewerName(payload.jti);
-        }
-
         setViewerToken(data?.token);
         sessionStorage.setItem(SESSION_VIEWER_TOKEN_KEY, data?.token);
       },
@@ -80,17 +73,13 @@ export default function ChannelPage({
         }
       }
 
-      if (payload.jti) {
-        setViewerName(payload.jti);
-      }
-
       setViewerToken(sessionToken);
     } else {
       setQueryEnabled(true);
     }
   }, [SESSION_VIEWER_TOKEN_KEY]);
 
-  if (viewerToken === "" || viewerName === "") {
+  if (viewerToken === "") {
     return null;
   }
 
@@ -107,7 +96,7 @@ export default function ChannelPage({
         </div>
         <div className="sticky hidden w-80 border-l dark:border-zinc-800 dark:bg-zinc-900 md:block">
           <div className="absolute top-0 bottom-0 right-0 flex h-full w-full flex-col gap-2 p-2">
-            <Chat viewerName={viewerName} />
+            <Chat />
           </div>
         </div>
       </div>

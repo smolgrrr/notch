@@ -6,19 +6,22 @@ import { NDKEvent } from "@nostr-dev-kit/ndk";
 import { getUserInfo } from "@/lib/user";
 
 type Props = {
-    viewerName: string;
     event: NDKEvent;
 };
 
-export default function ChatMessage({ viewerName, event }: Props) {
-    const [name, setName] = useState('')
-    useEffect(() => {
-        async function fetchEvents() {
-            setName(await getUserInfo(event.pubkey) as string);
-        }
-    
-        fetchEvents();
-      }, []);
+export default function ChatMessage({ event }: Props) {
+  const [name, setName] = useState('');
+  const [imageLink, setImageLink] = useState('');
+  
+  useEffect(() => {
+      async function fetchUserInfo() {
+          const userInfo = await getUserInfo(event.pubkey);
+          setName(userInfo.name ?? '');
+          setImageLink(userInfo.image ?? '');
+      }
+  
+      fetchUserInfo();
+  }, []);
 
   return (
     <>
@@ -26,14 +29,15 @@ export default function ChatMessage({ viewerName, event }: Props) {
           <div key={event.id} className="flex items-center gap-2 p-2">
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
+                <img
+                className="w-6 h-6 rounded-full" 
+                src={imageLink} />
                 <div
                   className={cn(
                     "text-xs font-semibold",
-                    viewerName === name && "text-blue-500"
                   )}
                 >
                   {name}:
-                  {viewerName === name && " (you)"}
                 </div>
               </div>
               <div className="text-sm">{event.content}</div>

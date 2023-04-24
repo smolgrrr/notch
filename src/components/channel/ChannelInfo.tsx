@@ -4,6 +4,7 @@ import { type Participant } from "livekit-client";
 import { useCallback } from "react";
 import { Icons } from "../ui";
 import Presence from "./Presence";
+import { Button } from "../ui";
 
 type Props = {
   username: string;
@@ -27,9 +28,9 @@ export default function ChannelInfo({ username }: Props) {
                 "h-16 w-16 rounded-full border-2 border-white bg-gray-500 dark:border-zinc-900",
                 isLive && "ring-2 ring-red-600"
               )}
-              src={`https://api.dicebear.com/5.x/open-peeps/svg?seed=${username}&size=64&face=smile,cute`}
-              alt={username}
+              src="https://i.imgur.com/VGpUNFS.jpg" alt="Fancy Bobo" 
             />
+            <img />
             {isLive && (
               <div className="absolute mt-14 w-12 rounded-xl border-2 border-white bg-red-600 p-1 text-center text-xs font-bold uppercase text-white transition-all dark:border-zinc-900">
                 Live
@@ -43,13 +44,13 @@ export default function ChannelInfo({ username }: Props) {
                 <Icons.check className="h-3 w-3 text-white dark:text-zinc-900" />
               </div>
             </div>
-            <h2 className="text-sm font-medium">Testing out LiveKit Ingress</h2>
+            <h2 className="text-sm font-medium">Running nostwitch</h2>
             <div className="-ml-0.5 flex gap-1 pt-1.5 text-xs font-medium">
               <div className="rounded-lg bg-zinc-200 px-2 py-0.5 dark:bg-zinc-800">
-                #livekit
+                #nostr
               </div>
               <div className="rounded-lg bg-zinc-200 px-2 py-0.5 dark:bg-zinc-800">
-                #ingress
+                #livekit
               </div>
               <div className="rounded-lg bg-zinc-200 px-2 py-0.5 dark:bg-zinc-800">
                 #livestream
@@ -57,7 +58,10 @@ export default function ChannelInfo({ username }: Props) {
             </div>
           </div>
         </div>
+        <div>
+        <Button variant='subtle' >Sub/Donate</Button>
         <Presence />
+        </div>
       </div>
     </div>
   );
