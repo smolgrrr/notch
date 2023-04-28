@@ -21,7 +21,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           fontSans.variable
         )}
       >
-        {/* <NavBar /> */}
+        <NavBar />
         <Component {...pageProps} />
       </main>
     </ThemeProvider>

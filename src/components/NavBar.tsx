@@ -10,7 +10,12 @@ export function NavBar() {
       return
     }
 
-    return await window.nostr.getPublicKey()
+    const pubkey = await window.nostr.getPublicKey();
+    localStorage.setItem(
+      "hexPubkey",
+      JSON.stringify(pubkey)
+    );
+    return pubkey
   }
 
   return (
@@ -31,7 +36,7 @@ export function NavBar() {
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
-            {/* <Link
+            <Link
               href="https://github.com/livekit-examples/livestream"
               target="_blank"
               rel="noreferrer"
@@ -57,7 +62,7 @@ export function NavBar() {
               >
                 <Icons.nostr className="h-7 w-7" />
                 <span className="sr-only">Nostr</span>
-              </div> */}
+              </div>
             <ThemeToggle />
           </nav>
         </div>
