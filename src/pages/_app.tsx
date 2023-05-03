@@ -7,12 +7,13 @@ import { Inter as FontSans } from "@next/font/google";
 import { ThemeProvider } from "next-themes";
 import { type AppType } from "next/app";
 import { NostrProvider } from "nostr-react";
+import { relayUrls } from "@/consts/consts";
 
-const relayUrls = [
-  "wss://nostr-pub.wellorder.net",
-  "wss://relay.nostr.ch",
-  'wss://nos.lol',
-];
+declare global {
+  interface Window {
+    webln?: WebLN;
+  }
+}
 
 const fontSans = FontSans({
   subsets: ["latin"],

@@ -4,7 +4,8 @@ import { type Participant } from "livekit-client";
 import { useCallback } from "react";
 import { Icons } from "../ui";
 import Presence from "./Presence";
-import { Button } from "../ui";
+import ZapButton from "./ZapButton";
+import { useNostrEvents } from "nostr-react";
 
 type Props = {
   username: string;
@@ -16,6 +17,13 @@ export default function ChannelInfo({ username }: Props) {
     filter: filterFn,
   });
   const isLive = participants.length > 0;
+
+  const { events } = useNostrEvents({
+    filter: {
+        kinds: [0],
+        authors: ['8f44c56131b362668b0e01be8c71b24786598bb68fb909cfd78fabfb058dd0f0'],
+        },
+    });
 
   return (
     <div className="space-y-6 border-t px-8 py-6 dark:border-t-zinc-800">
@@ -60,7 +68,7 @@ export default function ChannelInfo({ username }: Props) {
         </div>
         <div>
         <a>
-        <Button variant='subtle'>Sub/Donate</Button></a>
+        <ZapButton metadata={events[0]}/></a>
         <Presence />
         </div>
       </div>
