@@ -6,6 +6,13 @@ import { cn } from "@/styles/utils";
 import { Inter as FontSans } from "@next/font/google";
 import { ThemeProvider } from "next-themes";
 import { type AppType } from "next/app";
+import { NostrProvider } from "nostr-react";
+
+const relayUrls = [
+  "wss://nostr-pub.wellorder.net",
+  "wss://relay.nostr.ch",
+  'wss://nos.lol',
+];
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -14,6 +21,7 @@ const fontSans = FontSans({
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
+    <NostrProvider relayUrls={relayUrls} debug={true}>
     <ThemeProvider>
       <main
         className={cn(
@@ -25,6 +33,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <Component {...pageProps} />
       </main>
     </ThemeProvider>
+    </NostrProvider>
   );
 };
 

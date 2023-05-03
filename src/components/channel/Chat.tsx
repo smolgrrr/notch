@@ -1,91 +1,55 @@
 import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { Button, Icons, Textarea } from "../ui";
 
-import { NDKFilter, NDKEvent} from "@nostr-dev-kit/ndk";
-import ndk from "@/lib/ndk";
 import ChatMessage from "./ChatMessage";
 import { getStoredPubkey } from "@/lib/user";
 import { SimplePool, getEventHash, validateEvent, verifySignature } from "nostr-tools";
 import { relayInit } from "nostr-tools";
+import { useNostrEvents } from "nostr-react";
 import 'websocket-polyfill'
+import { Event } from "nostr-tools";
+import { useNostr } from "nostr-react";
 
 export default function Chat() {
-  const [events, setEvents] = useState<NDKEvent[]>([]);
-  const pool = new SimplePool()
-
-  const relays = ['wss://nos.lol'];
-
-  useEffect(() => {
-      async function fetchEvents() {
-      // Now connect to specified relays
-      await ndk.connect();
-
-      const filter: NDKFilter = { kinds: [1], '#e': ['ca18c387dc0e79239c74962ae883944d846a8866b17e90d6899dab6a6469f8e9'], limit: 20 };
-      const fetchedEvents = await ndk.fetchEvents(filter);
-      const eventsArray = Array.from(fetchedEvents);
-      setEvents(eventsArray);
-    }
-
-    fetchEvents();
-  }, []);
-
   const [message, setMessage] = useState("");
-  const messageEvent = new NDKEvent(ndk);
-  messageEvent.kind = 1;
-  messageEvent.tags = [['e', 'ca18c387dc0e79239c74962ae883944d846a8866b17e90d6899dab6a6469f8e9']];
+  const { publish } = useNostr();
+  const { events } = useNostrEvents({
+    filter: {
+      '#e':[
+        "ca18c387dc0e79239c74962ae883944d846a8866b17e90d6899dab6a6469f8e9",
+      ],
+      kinds: [1],
+    },
+  });
 
-  // const onEnter = useCallback(
-  //   (e: KeyboardEvent<HTMLTextAreaElement>) => {
-  //     if (e.key === "Enter" && !e.shiftKey) {
-  //       e.preventDefault();
-  //       if (message.trim().length > 0) {
-  //         send(message).catch((err) => console.error(err));
-  //         setMessage("");
-  //       }
-  //     }
-  //   },
-  //   [message, send]
-  // );
+  const onEnter = useCallback(
+    (e: KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        onSend();
+      }
+    },
+    [message]
+  );
 
   const onSend = useCallback(async () => {
-    const relay = relayInit('wss://nos.lol')
-    relay.on('connect', () => {
-      console.log(`connected to ${relay.url}`)
-    })
-    relay.on('error', () => {
-      console.log(`failed to connect to ${relay.url}`)
-    })
-
-    await relay.connect;
-
     if (message.trim().length > 0) {
-      let unpublishedEvent = {
+      const unpublishedEvent: Event = {
         id: 'null',
-        pubkey: getStoredPubkey() as string,
-        created_at: Math.round(Date.now() / 1000),
+        content: message,
         kind: 1,
         tags: [['e', 'ca18c387dc0e79239c74962ae883944d846a8866b17e90d6899dab6a6469f8e9']],
-        content: message,
-        sig: 'null'
-      }
+        created_at: Math.round(Date.now() / 1000),
+        pubkey: getStoredPubkey() as string,
+        sig: 'null',
+      };
 
       unpublishedEvent.id = getEventHash(unpublishedEvent);
       if (window.nostr) {
       unpublishedEvent.sig = (await window.nostr.signEvent(unpublishedEvent)).sig;
       }
-      let ok = validateEvent(unpublishedEvent)
-      let veryOk = verifySignature(unpublishedEvent)
 
-      console.log(ok);
-      console.log(veryOk);
-
-      let pub =  pool.publish(relays, unpublishedEvent);
-      pub.on('ok', () => {
-        console.log(`${relay.url} has accepted our event`)
-      })
-      pub.on('failed', (reason: string) => {
-        console.log(`failed to publish to ${relay.url}: ${reason}`)
-      })
+      publish(unpublishedEvent);
       setMessage("");
     }
   }, [message]);
@@ -102,7 +66,7 @@ export default function Chat() {
           onChange={(e) => {
             setMessage(e.target.value);
           }}
-          // onKeyDown={onEnter}
+          onKeyDown={onEnter}
           placeholder="Type a message..."
         />
         <Button

@@ -2,7 +2,6 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Icons } from "@/components/ui";
 import { buttonVariants } from "@/components/ui/Button";
 import Link from "next/link";
-import { NDKNip07Signer } from "@nostr-dev-kit/ndk";
 
 export function NavBar() {
   async function getPublicKey() {

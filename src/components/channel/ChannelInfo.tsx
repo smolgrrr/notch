@@ -59,7 +59,8 @@ export default function ChannelInfo({ username }: Props) {
           </div>
         </div>
         <div>
-        <Button variant='subtle' >Sub/Donate</Button>
+        <a>
+        <Button variant='subtle'>Sub/Donate</Button></a>
         <Presence />
         </div>
       </div>

@@ -2,26 +2,17 @@ import { useEffect, useState} from "react";
 
 import { cn } from "@/styles/utils";
 
-import { NDKEvent } from "@nostr-dev-kit/ndk";
-import { getUserInfo } from "@/lib/user";
+import { Event } from "nostr-tools";
+import { useProfile } from "nostr-react";
 
 type Props = {
-    event: NDKEvent;
+    event: Event;
 };
 
 export default function ChatMessage({ event }: Props) {
-  const [name, setName] = useState('');
-  const [imageLink, setImageLink] = useState('');
-  
-  useEffect(() => {
-      async function fetchUserInfo() {
-          const userInfo = await getUserInfo(event.pubkey);
-          setName(userInfo.name ?? '');
-          setImageLink(userInfo.image ?? '');
-      }
-  
-      fetchUserInfo();
-  }, []);
+  const { data: userData } = useProfile({
+    pubkey: event.pubkey,
+  });
 
   return (
     <>
@@ -31,13 +22,13 @@ export default function ChatMessage({ event }: Props) {
               <div className="flex items-center gap-2">
                 <img
                 className="w-6 h-6 rounded-full" 
-                src={imageLink} />
+                src={userData?.picture} />
                 <div
                   className={cn(
                     "text-xs font-semibold",
                   )}
                 >
-                  {name}:
+                  {userData?.name}:
                 </div>
               </div>
               <div className="text-sm">{event.content}</div>
