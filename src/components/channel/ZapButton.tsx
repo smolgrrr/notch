@@ -5,11 +5,12 @@ import {
     nip19,
     Event,
     generatePrivateKey,
-    finishEvent,
-    getEventHash
+    getEventHash,
+    signEvent
   } from "nostr-tools";
 import { getStoredPubkey } from '@/lib/user';
 import { relayUrls } from '@/consts/consts';
+import { useNostrEvents } from 'nostr-react';
 
 // based on https://github.com/nbd-wtf/nostr-tools/blob/master/nip57.ts
 export async function createZap(amount: number, metadata: Event) {
@@ -63,8 +64,36 @@ export async function createZap(amount: number, metadata: Event) {
         return body.error;
     }
 
-    return body.pr;
+    return {invoice: body.pr, id: zapRequest.id};
 }
+
+// based on https://github.com/nbd-wtf/nostr-tools/blob/master/nip57.ts
+export async function createBadge(id: string, metadata: Event) {
+  const { events } = await useNostrEvents({
+    filter: {
+      ids: [id], 
+      kinds: [9735],
+    },
+  });
+
+  if (events.length > 0) {
+  const badgeEvent: Event = {
+    id: 'null',
+    kind: 8,
+    content: '',
+    tags: [
+      ['a', '30009:8f44c56131b362668b0e01be8c71b24786598bb68fb909cfd78fabfb058dd0f0:smolgrrr_sub'],
+      ['p', metadata.pubkey],
+      ["relays", ...relayUrls],
+    ],
+    created_at: Math.round(Date.now() / 1000),
+    pubkey: '8f44c56131b362668b0e01be8c71b24786598bb68fb909cfd78fabfb058dd0f0',
+    sig: 'null',
+  };
+  badgeEvent.id = getEventHash(badgeEvent);
+  badgeEvent.sig = signEvent(badgeEvent, process.env.privateKey as string);
+
+  }}
 
 type ZapButtonProps = {
   metadata?: Event,
@@ -74,15 +103,21 @@ const ZapButton = ({metadata}: ZapButtonProps) => {
     const [zapRequest, setZapRequest] = useState<string | null>(null);
 
     const onClick = async () => {
-        createZap(50 * 1000, metadata as Event).then(result => {
-          setZapRequest(result);
-          console.log('Invoice: ' + result);
-          window.webln.sendPayment(result)
+        createZap(6500 * 1000, metadata as Event).then(result => {
+          setZapRequest(result.id);
+          console.log('Invoice: ' + result.invoice);
+          window.webln.sendPayment(result.invoice)
         }).catch(error => {
             alert('Zap failed with error: ' + error);
             return;
         });
     }
+
+    useEffect(() => {
+      if (zapRequest) {
+        createBadge(zapRequest, metadata as Event);
+      }
+    }, [zapRequest]);
 
     return (
         <>

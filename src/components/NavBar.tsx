@@ -2,8 +2,13 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Icons } from "@/components/ui";
 import { buttonVariants } from "@/components/ui/Button";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useProfile } from "nostr-react";
+import { Button } from "@/components/ui/Button";
 
 export function NavBar() {
+  const [storedPubkey, setStoredPubkey] = useState<string>('');
+
   async function getPublicKey() {
     if (!window.nostr) {
       return
@@ -14,8 +19,12 @@ export function NavBar() {
       "hexPubkey",
       JSON.stringify(pubkey)
     );
-    return pubkey
+    setStoredPubkey(pubkey);
   }
+
+  // const { data: userData } = useProfile({
+  //   pubkey: storedPubkey,
+  // });
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-b-zinc-200 bg-white px-4 dark:border-b-zinc-700 dark:bg-zinc-900">
@@ -59,7 +68,9 @@ export function NavBar() {
                 })}
                 onClick={getPublicKey}
               >
-                <Icons.nostr className="h-7 w-7" />
+                {storedPubkey ?                 <img
+                className="w-6 h-6 rounded-full" 
+                src={userData?.picture} /> : <Button variant={'subtle'}>Log In</Button>}
                 <span className="sr-only">Nostr</span>
               </div>
             <ThemeToggle />

@@ -1,4 +1,4 @@
-
+import { useProfile } from "nostr-react";
 
 export function getStoredPubkey() {
     const storedNostrObject = localStorage.getItem("hexPubkey");
