@@ -2,9 +2,7 @@ import { Button } from '../ui';
 import { useEffect, useState } from 'react';
 import {
     nip57,
-    nip19,
     Event,
-    generatePrivateKey,
     getEventHash,
     signEvent
   } from "nostr-tools";
@@ -121,7 +119,7 @@ const ZapButton = ({metadata}: ZapButtonProps) => {
 
     return (
         <>
-            <Button variant='subtle' onClick={onClick}>Zap Badge</Button>
+            <Button variant='subtle' onClick={onClick}>Zap for Badge</Button>
         </>
     )
 }

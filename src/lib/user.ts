@@ -17,3 +17,10 @@ export function getStoredPubkey() {
 
     return null;
 }
+
+export async function initUser(pubkey: string) {
+    const user = useProfile({
+        pubkey,
+    });
+    return user;
+}

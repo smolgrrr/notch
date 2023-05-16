@@ -5,8 +5,10 @@ import {
   IngressInput,
   IngressVideoEncodingPreset,
   TrackSource,
+  IngressVideoEncodingOptions
 } from "livekit-server-sdk";
 import { z } from "zod";
+import { VideoCodec, VideoQuality } from "livekit-server-sdk/dist/proto/livekit_models";
 
 export const ingressRouter = createTRPCRouter({
   create: publicProcedure
@@ -29,6 +31,9 @@ export const ingressRouter = createTRPCRouter({
           roomName: input.roomSlug,
           participantName: input.streamerName,
           participantIdentity: input.roomSlug,
+          video: {
+            preset: IngressVideoEncodingPreset.H264_1080P_30FPS_1_LAYER,
+          },
         }
       );
 

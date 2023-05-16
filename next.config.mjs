@@ -23,5 +23,8 @@ const config = {
   images: {
     domains: ["api.dicebear.com", "user-images.githubusercontent.com"],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 export default config;

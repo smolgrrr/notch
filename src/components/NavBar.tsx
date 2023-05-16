@@ -2,7 +2,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Icons } from "@/components/ui";
 import { buttonVariants } from "@/components/ui/Button";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useProfile } from "nostr-react";
 import { Button } from "@/components/ui/Button";
 
@@ -22,9 +22,9 @@ export function NavBar() {
     setStoredPubkey(pubkey);
   }
 
-  // const { data: userData } = useProfile({
-  //   pubkey: storedPubkey,
-  // });
+  const { data: userData } = useProfile({
+    pubkey: storedPubkey,
+  });
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-b-zinc-200 bg-white px-4 dark:border-b-zinc-700 dark:bg-zinc-900">
@@ -45,7 +45,7 @@ export function NavBar() {
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
             <Link
-              href="https://github.com/livekit-examples/livestream"
+              href="https://github.com/smolgrrr/notch"
               target="_blank"
               rel="noreferrer"
             >

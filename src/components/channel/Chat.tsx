@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
+import { useCallback, useState, type KeyboardEvent } from "react";
 import { Button, Icons, Textarea } from "../ui";
 
 import ChatMessage from "./ChatMessage";
 import { getStoredPubkey } from "@/lib/user";
-import { SimplePool, getEventHash, validateEvent, verifySignature } from "nostr-tools";
-import { relayInit } from "nostr-tools";
+import { getEventHash } from "nostr-tools";
 import { useNostrEvents } from "nostr-react";
 import 'websocket-polyfill'
 import { Event } from "nostr-tools";

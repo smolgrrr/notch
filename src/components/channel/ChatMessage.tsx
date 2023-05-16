@@ -1,5 +1,3 @@
-import { useEffect, useState} from "react";
-
 import { cn } from "@/styles/utils";
 
 import { Event } from "nostr-tools";
@@ -10,11 +8,15 @@ type Props = {
 };
 
 export default function ChatMessage({ event }: Props) {
-  const { data: userData } = useProfile({
-    pubkey: event.pubkey,
+  const { events: userEvents } = useNostrEvents({
+    filter: {
+      authors: [event.pubkey],
+      kinds: [0],
+    },
   });
-
-  const { events } = useNostrEvents({
+  const metadata_event = userEvents[0];
+  
+  const { events: badgeEvents } = useNostrEvents({
     filter: {
       authors: ['8f44c56131b362668b0e01be8c71b24786598bb68fb909cfd78fabfb058dd0f0'],
       '#p':[
@@ -24,11 +26,15 @@ export default function ChatMessage({ event }: Props) {
     },
   });
   let hasBadge = false;
-  if (events.length > 0) {
+  if (badgeEvents.length > 0) {
     hasBadge = true;
   }
 
+  if(!metadata_event)  {
+    return <div></div>
+  }  else {
 
+  const userData = JSON.parse(metadata_event.content);
   return (
     <>
       <div className="flex flex-1 flex-col-reverse ">
@@ -37,7 +43,8 @@ export default function ChatMessage({ event }: Props) {
               <div className="flex items-center gap-2">
                 <img
                 className="w-6 h-6 rounded-full" 
-                src={userData?.picture} />
+                src = {userData.picture}
+                />
                 <div
                   className={cn(
                     "text-xs font-semibold",
@@ -45,8 +52,7 @@ export default function ChatMessage({ event }: Props) {
                 >
                   {hasBadge && <span className="text-xs font-semibold text-green-500">☕</span>}
                   <br />
-                  {userData?.name}
-                  :
+                  {userData.name}:
                 </div>
               </div>
               <div className="text-sm">{event.content}</div>
@@ -55,4 +61,5 @@ export default function ChatMessage({ event }: Props) {
       </div>
     </>
   );
+  }
 }

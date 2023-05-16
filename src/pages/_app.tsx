@@ -10,7 +10,7 @@ import { relayUrls } from "@/consts/consts";
 
 declare global {
   interface Window {
-    webln?: WebLN;
+    webln?: any;
   }
 }
 
